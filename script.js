@@ -6,7 +6,7 @@ const resultsOverlay = document.getElementById("resultsOverlay");
 const closeResultsBtn = document.getElementById("closeResults");
 
 // State
-let raceInterval, timerInterval, timeRemaining;
+let raceInterval, timerInterval, timeRemaining, countdownInterval;
 let raceFinished = false;
 let finishTimes = [];
 let alldogesFinished = false;
@@ -66,7 +66,21 @@ function startRace() {
   document.querySelector(".race-container").style.display = "block";
 
   generateDoge(numDoge);
-  startRaceLogic(duration);
+
+  // Start 5-second countdown
+  let countdown = 5;
+  const timerDisplay = document.getElementById("timerDisplay");
+  timerDisplay.textContent = countdown.toString();
+
+  countdownInterval = setInterval(() => {
+    countdown--;
+    timerDisplay.textContent = countdown.toString();
+
+    if (countdown <= 0) {
+      clearInterval(countdownInterval);
+      startRaceLogic(duration); // Start race after countdown
+    }
+  }, 1000);
 }
 
 function generateDoge(num) {
@@ -158,8 +172,11 @@ function startRaceLogic(duration) {
       const deltaTime = now - state.lastUpdateTime;
       
       // More dynamic speed changes
-      if (Math.random() < 0.2) { // More frequent speed changes
-        state.currentSpeed = 0.3 + Math.random() * 2.0; // Wider speed range
+      if (Math.random() < 0.2) {
+        // 20% chance to reverse direction when changing speed
+        const reverseChance = 0.2; // 20% chance of negative speed
+        const speed = 0.3 + Math.random() * 2.0;
+        state.currentSpeed = Math.random() < reverseChance ? -speed : speed;
       }
       
       const distanceMoved = baseSpeedPerMs * state.currentSpeed * deltaTime;
@@ -253,6 +270,7 @@ function shuffleArray(arr) {
 function resetRace() {
   clearInterval(raceInterval);
   clearInterval(timerInterval);
+  clearInterval(countdownInterval); // Clear countdown interval
   document.getElementById("overlay").style.display = "flex";
   document.querySelector(".race-container").style.display = "none";
   resultsOverlay.style.display = "none";
