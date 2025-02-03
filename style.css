@@ -337,3 +337,8 @@ input[type="text"] {
 .first-place:hover img {
   transform: scale(1.1);
 }
+
+/* hide the audio element*/
+audio {
+  display: none;
+}
