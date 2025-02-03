@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Doge Race Championship</title>
   <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Watch Doge memes race in this chaotic championship!">
+  <meta name="theme-color" content="#2ecc71">
+</head>
+<body>
 </head>
 <body>
   <!-- Settings Overlay -->
   <div class="overlay" id="overlay">
     <div class="overlay-content">
-      <h1>Doge Race Championship 🏁</h1>
+      <h1>Doge Race 🏁</h1>
       <label for="numDoge">Number of Doges (1-50):</label>
       <input type="number" id="numDoge" min="1" max="50" value="5">
       <label for="raceDuration">Race Duration (MM:SS):</label>
@@ -33,17 +37,17 @@
   </div>
 
   <!-- Race Container -->
-  <div class="race-container">
+  <main class="race-container">
     <!-- Header Controls -->
     <div class="race-header">
-      <button id="resetBtn">Reset</button>
-      <span id="timerDisplay">0</span>
-      <button id="fullscreenBtn">Fullscreen</button>
+      <button id="resetBtn" aria-label="Reset race">Reset</button>
+      <span id="timerDisplay" role="timer">0</span>
+      <button id="fullscreenBtn" aria-label="Toggle fullscreen">Fullscreen</button>
     </div>
     
     <!-- Race Track -->
-    <div class="race-track" id="raceTrack"></div>
-  </div>
+    <section class="race-track" id="raceTrack" aria-live="polite"></section>
+  </main>
 
   <!-- Results Overlay -->
   <div class="results-overlay" id="resultsOverlay">
