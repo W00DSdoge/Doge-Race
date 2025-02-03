@@ -10,12 +10,27 @@ let raceInterval, timerInterval, timeRemaining, countdownInterval;
 let raceFinished = false;
 let finishTimes = [];
 let allDogesFinished = false;
+let audioContext;
+let startSoundBuffer;
 
 // Event Listeners
 startBtn.addEventListener("click", startRace);
 resetBtn.addEventListener("click", resetRace);
 fullscreenBtn.addEventListener("click", toggleFullscreen);
 closeResultsBtn.addEventListener("click", () => resultsOverlay.style.display = "none");
+
+startBtn.addEventListener("click", async function initAudio() {
+  try {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const response = await fetch('sounds/airhorn.mp3');
+      const arrayBuffer = await response.arrayBuffer();
+      startSoundBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    }
+  } catch (error) {
+    console.error('Audio initialization failed:', error);
+  }
+}, { once: true }); // The { once: true } means this only runs on first click
 
 document.querySelectorAll(".keypad-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -67,18 +82,27 @@ function startRace() {
 
   generateDoge(numDoge);
 
-  // Start 5-second countdown
-  let countdown = 5;
+  // Start 3-second countdown
+  let countdown = 3;
   const timerDisplay = document.getElementById("timerDisplay");
   timerDisplay.textContent = countdown.toString();
 
   countdownInterval = setInterval(() => {
     countdown--;
     timerDisplay.textContent = countdown.toString();
-
+  
     if (countdown <= 0) {
       clearInterval(countdownInterval);
-      startRaceLogic(duration); // Start race after countdown
+      
+      // New sound playback code ▼
+      if (audioContext && startSoundBuffer) {
+        const source = audioContext.createBufferSource();
+        source.buffer = startSoundBuffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+      }
+      
+      startRaceLogic(duration);
     }
   }, 1000);
 }
@@ -132,7 +156,7 @@ function startRaceLogic(duration) {
   // Reset state
   timeRemaining = duration;
   finishTimes = [];
-  allDogesssFinished = false;
+  allDogesFinished = false;
   raceFinished = false;
   timerDisplay.textContent = formatTime(timeRemaining);
   
@@ -155,7 +179,7 @@ function startRaceLogic(duration) {
     timeRemaining = duration - Math.floor(elapsed / 1000);
     timerDisplay.textContent = formatTime(timeRemaining);
     
-    if (timeRemaining <= 0 && !allDogessFinished) {
+    if (timeRemaining <= 0 && !allDogesFinished) {
       clearInterval(timerInterval);
       checkAllFinished(doges, dogeStates);
     }
@@ -203,7 +227,7 @@ function startRaceLogic(duration) {
 
     // Check if all doges finished
     if (finishTimes.length === doges.length) {
-      allDogessFinished = true;
+      allDogesFinished = true;
       endRace();
     }
   }, 16);
