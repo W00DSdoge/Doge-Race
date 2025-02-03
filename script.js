@@ -9,7 +9,7 @@ const closeResultsBtn = document.getElementById("closeResults");
 let raceInterval, timerInterval, timeRemaining, countdownInterval;
 let raceFinished = false;
 let finishTimes = [];
-let alldogesFinished = false;
+let allDogesFinished = false;
 
 // Event Listeners
 startBtn.addEventListener("click", startRace);
@@ -250,7 +250,7 @@ function showResults(results) {
 // Helper Functions
 function validateInputs(doges, duration) {
   if (isNaN(doges) || doges < 1 || doges > 100) {
-    alert("Please enter between 1-100 doges!");
+    alert("Please enter between 1-50 doges!");
     return false;
   }
   if (duration < 1) {
@@ -296,8 +296,8 @@ function formatTime(seconds) {
 }
 
 function checkAllFinished(doges, dogeStates) {
-  alldogesFinished = dogeStates.every(state => state.finished);
-  if (!alldogesFinished) {
+  allDogesFinished = dogeStates.every(state => state.finished);
+  if (!allDogesFinished) {
     // Continue updating positions until all doges finish
     requestAnimationFrame(() => checkAllFinished(doges, dogeStates));
   }
